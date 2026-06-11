@@ -86,7 +86,7 @@ weibo-checkin/
 - 取得超話列表（含分頁，目前共 24 個）
 - 逐一簽到（測試全部成功，24/24 成功）
 - Email 通知（Gmail SMTP，已設定應用程式密碼並測試成功，含每日摘要）
-- 部署到 Cloud Functions（asia-east1，URL: https://asia-east1-weibo-checkin.cloudfunctions.net/weibo-checkin）
+- 部署到 Cloud Functions（asia-east1）
 - Cloud Scheduler 每日定時觸發（job: weibo-checkin-daily，每天台灣時間 09:00，已手動測試成功）
 - 本機重新登入捷徑（桌面捷徑「微博重新登入」，雙擊執行 auth.py 並更新 GCS 上的 Cookie）
 
