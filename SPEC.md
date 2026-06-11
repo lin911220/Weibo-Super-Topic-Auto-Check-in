@@ -56,6 +56,30 @@ weibo-checkin/
 └── .env.example            # 環境變數範本（不含真實值）
 ```
 
+## 架構圖
+```
+┌─────────────┐
+│ 你的電腦     │
+│ auth.py     │── Playwright 開瀏覽器掃 QR Code
+└──────┬──────┘
+       │ 把 Cookie 寫成 JSON
+       ▼
+┌─────────────┐
+│ GCS Bucket  │── 雲端硬碟，存 Cookie
+└──────┬──────┘
+       │ 每天 09:00 被讀取
+       ▼
+┌──────────────────┐     ┌──────────────────┐
+│ Cloud Scheduler   │────▶│ Cloud Functions   │
+│ (鬧鐘，定時發請求)  │ HTTP│ (跑 main.py)      │
+└──────────────────┘     └─────────┬─────────┘
+                                    │
+                          ┌─────────┴─────────┐
+                          ▼                   ▼
+                   Cloud Logging        Gmail SMTP
+                  （記錄簽到結果）        （Email 通知）
+```
+
 ## 已驗證可運作
 - Playwright 登入並取得完整 Cookie（含 weibo.com、m.weibo.cn 等 domain）
 - Cookie 存取 GCS（bucket: weibo-checkin-project）
