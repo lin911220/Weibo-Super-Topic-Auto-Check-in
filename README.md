@@ -3,7 +3,6 @@
 [![Python](https://img.shields.io/badge/Python-3.11-blue.svg)](https://www.python.org/)
 [![Platform](https://img.shields.io/badge/Platform-GCP%20Cloud%20Functions-4285F4.svg)](https://cloud.google.com/functions)
 [![Scheduler](https://img.shields.io/badge/Trigger-Cloud%20Scheduler-34A853.svg)](https://cloud.google.com/scheduler)
-[![License](https://img.shields.io/badge/License-Private-lightgrey.svg)](#)
 
 ## Description
 
