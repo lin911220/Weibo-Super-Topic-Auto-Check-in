@@ -1,0 +1,18 @@
+# Virtual environment
+myenv/
+venv/
+.venv/
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+
+# Environment variables / secrets
+.env
+
+# Local-only files
+requirements-local.txt
+output.txt
+test_local.py
+test_qr_login.py

@@ -1,0 +1,14 @@
+.gcloudignore
+.git
+.gitignore
+myenv/
+__pycache__/
+*.pyc
+.env
+.env.example
+requirements-local.txt
+重新登入.bat
+SPEC.md
+test_local.py
+test_qr_login.py
+output.txt
