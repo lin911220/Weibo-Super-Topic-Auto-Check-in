@@ -70,7 +70,7 @@ weibo-checkin/
        │ 每天 09:00 被讀取
        ▼
 ┌──────────────────┐       ┌──────────────────┐
-│ Cloud Scheduler   │────▶│ Cloud Functions   │
+│ Cloud Scheduler  │ ────▶│ Cloud Functions   │
 │ (鬧鐘，定時發請求) │ HTTP │ (跑 main.py)      │
 └──────────────────┘       └────────┬─────────┘
                                     │
