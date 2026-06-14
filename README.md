@@ -10,10 +10,6 @@ Automatically checks in to all followed Weibo super topics every day, with no ma
 
 The system uses Playwright to scan a QR code locally and obtain a login cookie, which is stored in GCS. Each day, Cloud Scheduler triggers a Cloud Functions deployment that reads the cookie, fetches the list of followed super topics, checks in to each one, and sends an email report of the daily results and cookie health.
 
-## System Name
-
-**weibo-checkin** — Weibo Super Topic Auto Check-in System
-
 ## System Environment
 
 | Item | Description |
