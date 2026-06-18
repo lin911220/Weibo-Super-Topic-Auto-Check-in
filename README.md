@@ -69,12 +69,12 @@ cp .env.example .env
 1. **Log in locally and upload the cookie** (first run, or when the cookie expires)
 
    ```bash
-   python auth.py
+   python auth.py --checkin
    ```
 
-   This opens a browser showing a QR code. Scan it with the Weibo app to log in, and the cookie is automatically uploaded to GCS.
+   This opens a browser showing a QR code. Scan it with the Weibo app to log in, the cookie is automatically uploaded to GCS, and today's check-in runs immediately.
 
-   You can also double-click `relogin.bat` (or the "Weibo Re-login" desktop shortcut) to do this with one click.
+   You can also double-click `relogin.bat` (or the "Weibo Re-login" desktop shortcut) to do this with one click. This prevents a missed check-in on the day you re-login.
 
 2. **Deploy to Cloud Functions**
 
@@ -109,9 +109,10 @@ cp .env.example .env
 ## Workflow
 
 ```
-1. Run auth.py locally
+1. Run auth.py --checkin locally
    - Playwright opens a browser -> scan QR code to log in to Weibo
    - Obtain the full cookie (with domain info) -> upload to GCS
+   - Immediately run today's check-in (prevents missed check-in on re-login day)
 
 2. Cloud Scheduler triggers Cloud Functions daily at 09:00 (Taiwan time)
 
@@ -138,7 +139,7 @@ weibo-checkin/
 ├── requirements.txt          # Cloud Functions deployment dependencies (no playwright)
 ├── requirements-local.txt    # Local dev dependencies (includes playwright, used by auth.py)
 ├── .gcloudignore             # Excludes myenv/, .env, test files, etc. from deployment
-├── relogin.bat               # One-click local re-login shortcut (with desktop shortcut)
+├── relogin.bat               # One-click local re-login shortcut (with desktop shortcut); also runs today's check-in after login
 ├── .env                      # Actual environment variables (not in git)
 └── .env.example              # Environment variable template (no real values)
 ```
@@ -172,5 +173,6 @@ weibo-checkin/
 - Check-in requests mimic human behavior (random delays, browser-like headers) to reduce bot detection risk
 - An expired cookie requires a manual re-scan; the system detects this automatically and sends an email notification
 - The Cloud Function is deployed with `--no-allow-unauthenticated`, so only a service account with invoker permission (Cloud Scheduler via OIDC token) can call it
+- On Windows, `tzdata` must be installed locally (`pip install -r requirements-local.txt`); Python's `zoneinfo` has no built-in timezone database on Windows
 
 See [SPEC.md](./SPEC.md) for more details.

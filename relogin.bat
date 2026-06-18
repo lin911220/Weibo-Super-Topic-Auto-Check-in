@@ -10,7 +10,7 @@ echo Browser will open. Please scan QR Code with Weibo APP to login
 echo.
 
 call myenv\Scripts\activate.bat
-python auth.py
+python auth.py --checkin
 
 echo.
 if %errorlevel% equ 0 (

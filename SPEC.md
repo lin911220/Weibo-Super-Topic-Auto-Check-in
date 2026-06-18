@@ -9,7 +9,7 @@
 - 語言：Python 3.11
 
 ## 功能流程
-1. 使用者在本機執行 auth.py，透過 Playwright 開啟瀏覽器掃 QR Code 登入微博，程式取得並儲存 Cookie（含 domain 資訊）到 GCS
+1. 使用者在本機執行 auth.py（或雙擊 relogin.bat），透過 Playwright 開啟瀏覽器掃 QR Code 登入微博，程式取得並儲存 Cookie（含 domain 資訊）到 GCS；若傳入 `--checkin` 參數，上傳完畢後立即執行當日簽到
 2. Cloud Functions 啟動時從 GCS 讀取 Cookie，並驗證是否仍有效
 3. 程式用 Cookie 向微博 API 請求「我關注的超話列表」（自動處理分頁，取得全部超話）
 4. 從列表中提取每個超話的名稱和 ID
@@ -36,6 +36,7 @@
 - Cookie 過期需人工重新掃碼，程式負責偵測並以 Email 通知
 - 微博 API endpoint 集中在 config.py 管理，方便 API 結構變動時維護
 - 登入須使用 Playwright（本機執行，需安裝 Chromium），純 API 呼叫無法取得 weibo.com 網域所需的完整 Cookie
+- Windows 本機需安裝 `tzdata` 套件（加入 requirements-local.txt），`zoneinfo` 在 Windows 上無內建時區資料庫
 - Cloud Functions 部署不包含 Playwright（僅本機登入流程需要），`auth.py` 中 Playwright 為延遲載入（lazy import），避免雲端環境因缺少套件而啟動失敗
 - Cloud Function 設定 `--no-allow-unauthenticated`，僅允許具備 invoker 權限的服務帳號呼叫（Cloud Scheduler 透過 OIDC token 驗證）
 
@@ -51,7 +52,7 @@ weibo-checkin/
 ├── requirements.txt        # Cloud Functions 部署依賴（不含 playwright）
 ├── requirements-local.txt  # 本機開發依賴（含 playwright，用於 auth.py 登入）
 ├── .gcloudignore           # 部署時排除 myenv/、.env、測試檔案等
-├── relogin.bat             # 本機一鍵重新登入捷徑（含桌面捷徑）
+├── relogin.bat             # 本機一鍵重新登入捷徑（含桌面捷徑），登入後自動執行當日簽到
 ├── .env                    # 實際環境變數（不入 git）
 └── .env.example            # 環境變數範本（不含真實值）
 ```
@@ -88,7 +89,7 @@ weibo-checkin/
 - Email 通知（Gmail SMTP，已設定應用程式密碼並測試成功，含每日摘要）
 - 部署到 Cloud Functions（asia-east1）
 - Cloud Scheduler 每日定時觸發（job: weibo-checkin-daily，每天台灣時間 09:00，已手動測試成功）
-- 本機重新登入捷徑（桌面捷徑「微博重新登入」，雙擊執行 auth.py 並更新 GCS 上的 Cookie）
+- 本機重新登入捷徑（桌面捷徑「微博重新登入」，雙擊執行 auth.py --checkin，更新 GCS 上的 Cookie 並立即執行當日簽到，避免因重新登入導致斷簽）
 
 ## 尚待完成
 - 持續觀察每日摘要 Email（自 2026-06-11 起），記錄 Cookie 大約可使用幾天，作為後續優化依據

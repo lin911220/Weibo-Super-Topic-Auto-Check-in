@@ -118,7 +118,39 @@ def verify_cookie(cookies) -> bool:
 # 本機執行入口：登入並存到 GCS
 # ──────────────────────────────────────────
 
+def _run_checkin_after_login():
+    import checkin
+    import notifier
+    from datetime import datetime
+    from zoneinfo import ZoneInfo
+
+    print("\n開始執行今日簽到...")
+    cookies = load_cookie_from_gcs()
+    results = checkin.run_checkin(cookies)
+    success_count = sum(1 for r in results if r["success"])
+    fail_count = len(results) - success_count
+
+    for r in results:
+        status = "成功" if r["success"] else "失敗"
+        print(f"  [{status}] {r['name']}: {r['message']}")
+
+    print(f"\n簽到完成：共 {len(results)} 個，成功 {success_count}，失敗 {fail_count}")
+
+    failures = [r for r in results if not r["success"]]
+    if failures:
+        notifier.notify_checkin_failures(failures)
+
+    date_str = datetime.now(ZoneInfo("Asia/Taipei")).strftime("%Y-%m-%d")
+    notifier.notify_daily_summary(date_str, len(results), success_count, fail_count)
+
+
 if __name__ == "__main__":
+    import sys
+    run_checkin = "--checkin" in sys.argv
+
     cookies = login_with_playwright()
     save_cookie_to_gcs(cookies)
     print("完成，Cookie 已上傳到 GCS。")
+
+    if run_checkin:
+        _run_checkin_after_login()
